@@ -1,35 +1,88 @@
-# Automação E2E - Sistema SCADA Industrial
+# Automação E2E - SCADA (Monitoramento de Alarmes)
 
-Este projeto é uma automação construída para validar o fluxo crítico de login e a navegação profunda na árvore de ativos de um sistema SCADA de missão crítica. 
+Projeto de automação end-to-end focado na validação de um fluxo crítico em sistema SCADA: autenticação, navegação na árvore de ativos e acesso ao painel de alarmes.
 
-O objetivo é garantir que a interface suporte a operação diária e que o painel de "Alarmes / Registros" esteja acessível para os operadores de planta.
+O cenário cobre uma operação real de um operador de planta, garantindo que o sistema permita o monitoramento de falhas de equipamentos de forma consistente.
 
-## Desafios Encontrados e Soluções
+---
 
-Sistemas industriais front-end frequentemente apresentam comportamentos instáveis devido ao peso do processamento de dados. Para contornar isso, apliquei as seguintes estratégias:
+## 🔍 Cobertura dos Testes
 
-- **Controle de iFrames:** Todo o sistema opera confinado em um `iframe#mainframe`. A automação gerencia a troca de contexto nativamente pelo Playwright logo no início da execução.
-- **Micro-Pausas para Estabilidade de UI:** Durante a navegação em nós profundos da árvore (ex: 'Ibirapuita' -> 'AEG02'), o sistema entra em *Race Condition* (a interface tenta desenhar o botão antes do JavaScript interno ativá-lo). Implementei um `wait()` estratégico e cirúrgico de 2 segundos para estabilizar a DOM antes do clique final em "Alarmes", eliminando falhas de falso-negativo.
-- **Smart Waits na Casca:** Substituição de pausas fixas por `waitForText` e `waitForElement` durante a transição de telas, permitindo que a automação acompanhe a velocidade do servidor dinamicamente.
-- **Blindagem de Dados Sensíveis:** Utilização da biblioteca `dotenv`. Todas as credenciais de acesso, IPs e rotas internas são injetadas em tempo de execução e omitidas do controle de versão pelo `.gitignore`.
+- Login no sistema
+- Navegação hierárquica de ativos
+- Acesso ao painel "Alarmes / registros"
+- Validação de carregamento da interface
+- Testes negativos de autenticação
 
-## Cenário de Teste (BDD)
+---
 
-**Feature:** Monitoramento de Alarmes de Ativos (SCADA)
-Como um operador de planta
-Eu quero acessar o sistema SCADA e navegar até a tela de alarmes de um motor específico
-Para que eu possa monitorar falhas (ERROR/WARNING) e tomar decisões operacionais.
+## ⚙️ Stack
 
-**Cenário:** Validação de carregamento de alarmes do motor AEG02
-  Dado que eu acesso o portal SCADA com credenciais de operador
-  E navego pela árvore de ativos ("Rio Grande DS" > "Ibirapuita")
-  Quando eu seleciono o motor "AEG02"
-  E clico na aba "Alarmes"
-  Então o sistema deve exibir o título da aba correspondente
-  E carregar a tabela de dados dinâmicos de falhas do ativo
+- Node.js  
+- CodeceptJS (BDD)  
+- Playwright  
+- dotenv  
 
-## Stacks
-- **Node.js**
-- **CodeceptJS** (Framework BDD E2E)
-- **Playwright** (Engine Chromium para alta performance)
-- **Dotenv** (Segurança)
+---
+
+## ⚠️ Desafios Técnicos
+
+### iFrame
+
+A aplicação é renderizada dentro de um `iframe`, exigindo controle explícito de contexto antes de qualquer interação.
+
+---
+
+### Sincronização de UI
+
+Durante a navegação na árvore de ativos, o sistema apresenta comportamento assíncrono inconsistente:
+
+- Elementos visíveis, mas ainda não interativos
+- Delay entre renderização e ativação de eventos
+
+#### Estratégia adotada:
+
+- Uso de `waitForElement` e `waitForText` no fluxo padrão
+- Uso de `wait` fixo em ponto crítico da navegação (acesso ao ativo)
+
+Esse comportamento foi validado empiricamente:  
+sem o `wait`, o teste apresenta falhas intermitentes.
+
+> Decisão: priorizar estabilidade e evitar falsos negativos em um sistema com baixa previsibilidade de renderização.
+
+---
+
+## 🧪 Cenários de Teste (BDD)
+
+Feature: Monitoramento de Alarmes em Sistema SCADA
+
+  Como operador de planta
+  Quero acessar os alarmes de um ativo
+  Para monitorar falhas operacionais
+
+  Cenário: Acesso aos alarmes do motor AEG02
+    Dado que acesso o sistema com credenciais válidas
+    Quando navego pela árvore de ativos "Rio Grande DS" > "Ibirapuita"
+    E seleciono o motor "AEG02"
+    E acesso a aba "Alarmes / registros"
+    Então o sistema deve exibir o painel de alarmes corretamente
+
+  Cenário: Tentativa de login sem senha
+    Dado que acesso a tela de login
+    Quando informo apenas o usuário
+    E tento realizar o login
+    Então o sistema deve exibir mensagem de erro
+
+  Cenário: Tentativa de login sem usuário
+    Dado que acesso a tela de login
+    Quando informo apenas a senha
+    E tento realizar o login
+    Então o sistema deve exibir mensagem de erro
+
+
+## 📊 O que este projeto demonstra
+
+- Automação E2E em sistema com UI instável
+- Tratamento de race condition
+- Estratégia híbrida de sincronização
+- Organização de testes com BDD
