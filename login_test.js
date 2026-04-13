@@ -9,8 +9,8 @@ const loginSteps = require('./steps/login');
     I.switchTo('iframe#mainframe');
 
     // Login
-    login(I);
-
+    loginSteps.login(I);
+    
     // Navegação
     I.waitForText('Rio Grande DS', 20); // confirmação de login e carregamento inicial
     I.click('Rio Grande DS');
