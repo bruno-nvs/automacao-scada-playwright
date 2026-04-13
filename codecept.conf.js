@@ -14,7 +14,7 @@ exports.config = {
     Playwright: {
       windowSize: '1920x1080',
       browser: 'chromium',
-      userDataDir:
+      userDataDir: './perfil_robo_scada',
       url: 'http://localhost',
       show: true,
       channel: 'chrome',

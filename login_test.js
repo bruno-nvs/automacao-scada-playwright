@@ -2,12 +2,7 @@ require('dotenv').config();
 
 Feature('SCADA - Monitoramento de Alarmes');
 
-function login(I) {
-    I.waitForElement('#username', 15);
-    I.fillField('#username', process.env.USUARIO_WEG);
-    I.fillField('#password', process.env.SENHA_WEG);
-    I.click('#login_button');
-}
+const loginSteps = require('./steps/login');
 
   Scenario('Deve acessar alarmes do motor AEG02 com sucesso', async ({ I }) => {
     I.amOnPage(process.env.URL_SISTEMA);
@@ -33,6 +28,7 @@ function login(I) {
     I.saveScreenshot('alarmes_aeg02.png');
 
     I.say('Fluxo crítico validado com sucesso');
+
 }).tag('@smoke')
 
 // Lofin inválido (sem senha)
