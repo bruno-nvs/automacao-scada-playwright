@@ -74,7 +74,6 @@ sem o `wait`, o teste apresentava falhas intermitentes (flaky).
 
 ## 🏷️ Execução por Tags
 
-```bash
 # Fluxo principal
 npx codeceptjs run --grep "@smoke"
 
