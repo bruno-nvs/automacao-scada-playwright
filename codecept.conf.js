@@ -14,16 +14,16 @@ exports.config = {
     Playwright: {
       windowSize: '1920x1080',
       browser: 'chromium',
-      userDataDir: './perfil_robo_scada', // Pasta para armazenar o perfil do navegador (cookies, localStorage, etc.)
+      userDataDir:
       url: 'http://localhost',
       show: true,
       channel: 'chrome',
       ignoreHTTPSErrors: true,
       waitForNavigation: "load",
-      getPageTimeout: 60000, // Aumenta o tempo limite para 60 segundos (sistemas industriais precisam disso)
-      restart: true, // Força o navegador a reiniciar do zero entre os testes
-      keepCookies: false, // Garante que não salve cookies de uma sessão para outra
-      keepBrowserState: false, // Garante que não salve o estado do navegador (como localStorage) de uma sessão para outra
+      getPageTimeout: 60000,
+      restart: true,
+      keepCookies: false,
+      keepBrowserState: false,
     }
   },
   include: {
