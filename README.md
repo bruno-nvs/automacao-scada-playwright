@@ -1,25 +1,45 @@
 # Automação E2E - SCADA (Monitoramento de Alarmes)
 
-Projeto de automação end-to-end focado na validação de um fluxo crítico em sistema SCADA: autenticação, navegação na árvore de ativos e acesso ao painel de alarmes.
+Automação end-to-end desenvolvida com Playwright + CodeceptJS para validar um fluxo crítico de um sistema SCADA industrial.
 
-O cenário cobre uma operação real de um operador de planta, garantindo que o sistema permita o monitoramento de falhas de equipamentos de forma consistente.
+O teste simula o comportamento de um operador, garantindo que seja possível acessar e monitorar alarmes de ativos através da interface.
 
 ---
 
-## 🔍 Cobertura dos Testes
+## 🎯 Objetivo
 
-- Login no sistema
-- Navegação hierárquica de ativos
-- Acesso ao painel "Alarmes / registros"
-- Validação de carregamento da interface
-- Testes negativos de autenticação
+Validar um fluxo essencial do sistema:
+
+- Autenticação de usuário
+- Navegação na árvore de ativos
+- Acesso ao painel de alarmes
+- Verificação de carregamento da interface
+
+---
+
+## 🧪 Cenários Automatizados
+
+### 🟢 Fluxo principal (Smoke Test)
+
+- Login com credenciais válidas  
+- Navegação até o ativo **AEG02**  
+- Acesso ao painel **"Alarmes / registros"**  
+- Validação de carregamento da tela  
+
+---
+
+### 🔴 Cenários negativos
+
+- Tentativa de login sem senha  
+- Tentativa de login sem usuário  
+- Validação de mensagem de erro  
 
 ---
 
 ## ⚙️ Stack
 
 - Node.js  
-- CodeceptJS (BDD)  
+- CodeceptJS  
 - Playwright  
 - dotenv  
 
@@ -29,60 +49,34 @@ O cenário cobre uma operação real de um operador de planta, garantindo que o 
 
 ### iFrame
 
-A aplicação é renderizada dentro de um `iframe`, exigindo controle explícito de contexto antes de qualquer interação.
+A aplicação é executada dentro de um `iframe`, exigindo troca de contexto antes das interações.
 
 ---
 
-### Sincronização de UI
+### Sincronização de UI (Ponto crítico)
 
-Durante a navegação na árvore de ativos, o sistema apresenta comportamento assíncrono inconsistente:
+Durante a navegação na árvore de ativos, foram identificados problemas como:
 
-- Elementos visíveis, mas ainda não interativos
-- Delay entre renderização e ativação de eventos
+- Elementos visíveis, mas não clicáveis  
+- Delay entre renderização e ativação de eventos  
 
 #### Estratégia adotada:
 
-- Uso de `waitForElement` e `waitForText` no fluxo padrão
-- Uso de `wait` fixo em ponto crítico da navegação (acesso ao ativo)
+- Uso de esperas dinâmicas (`waitForElement`, `waitForText`)
+- Uso de `wait(2)` em ponto específico da navegação
 
-Esse comportamento foi validado empiricamente:  
-sem o `wait`, o teste apresenta falhas intermitentes.
+Esse comportamento foi validado na prática:  
+sem o `wait`, o teste apresentava falhas intermitentes (flaky).
 
-> Decisão: priorizar estabilidade e evitar falsos negativos em um sistema com baixa previsibilidade de renderização.
+> Decisão: priorizar estabilidade da automação em um sistema com comportamento assíncrono inconsistente.
 
 ---
 
-## 🧪 Cenários de Teste (BDD)
+## 🏷️ Execução por Tags
 
-Feature: Monitoramento de Alarmes em Sistema SCADA
+```bash
+# Fluxo principal
+npx codeceptjs run --grep "@smoke"
 
-  Como operador de planta
-  Quero acessar os alarmes de um ativo
-  Para monitorar falhas operacionais
-
-  Cenário: Acesso aos alarmes do motor AEG02
-    Dado que acesso o sistema com credenciais válidas
-    Quando navego pela árvore de ativos "Rio Grande DS" > "Ibirapuita"
-    E seleciono o motor "AEG02"
-    E acesso a aba "Alarmes / registros"
-    Então o sistema deve exibir o painel de alarmes corretamente
-
-  Cenário: Tentativa de login sem senha
-    Dado que acesso a tela de login
-    Quando informo apenas o usuário
-    E tento realizar o login
-    Então o sistema deve exibir mensagem de erro
-
-  Cenário: Tentativa de login sem usuário
-    Dado que acesso a tela de login
-    Quando informo apenas a senha
-    E tento realizar o login
-    Então o sistema deve exibir mensagem de erro
-
-
-## 📊 O que este projeto demonstra
-
-- Automação E2E em sistema com UI instável
-- Tratamento de race condition
-- Estratégia híbrida de sincronização
-- Organização de testes com BDD
+# Testes negativos
+npx codeceptjs run --grep "@negativo"
