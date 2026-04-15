@@ -1,37 +1,54 @@
 # Automação E2E - SCADA (Monitoramento de Alarmes)
 
-Automação end-to-end desenvolvida com Playwright + CodeceptJS para validar um fluxo crítico de um sistema SCADA industrial.
-
-O teste simula o comportamento de um operador, garantindo que seja possível acessar e monitorar alarmes de ativos através da interface.
+Projeto de automação de testes focado na validação de um fluxo crítico em um sistema SCADA industrial, combinando abordagem end-to-end com análise exploratória de comportamento da interface.
+O teste simula o uso real por um operador de planta, com foco em confiabilidade do acesso aos alarmes e estabilidade da navegação em cenários com UI assíncrona.
 
 ---
 
 ## 🎯 Objetivo
 
-Validar um fluxo essencial do sistema:
+Validar a operação de monitoramento de alarmes considerando:
 
-- Autenticação de usuário
+- Autenticação no sistema
 - Navegação na árvore de ativos
 - Acesso ao painel de alarmes
-- Verificação de carregamento da interface
+- Comportamento da interface sob condições reais de carregamento
+
+---
+
+## 🧪 Abordagem de Teste
+
+Este projeto não se limita a automação tradicional. Ele combina:
+
+### 🔎 Teste exploratório guiado
+- Identificação de comportamentos inconsistentes da UI
+- Observação de falhas intermitentes durante navegação
+
+### 🔄 Teste end-to-end (E2E)
+- Validação completa do fluxo do usuário
+- Garantia de funcionamento do caminho crítico
+
+### 🧠 Teste investigativo
+- Análise de race condition na interface
+- Ajustes baseados em comportamento real da aplicação
 
 ---
 
 ## 🧪 Cenários Automatizados
 
-### 🟢 Fluxo principal (Smoke Test)
+### 🟢 Fluxo crítico (Smoke Test)
 
 - Login com credenciais válidas  
 - Navegação até o ativo **AEG02**  
 - Acesso ao painel **"Alarmes / registros"**  
-- Validação de carregamento da tela  
+- Validação do carregamento da tela  
 
 ---
 
 ### 🔴 Cenários negativos
 
-- Tentativa de login sem senha  
-- Tentativa de login sem usuário  
+- Login sem senha  
+- Login sem usuário  
 - Validação de mensagem de erro  
 
 ---
@@ -49,32 +66,33 @@ Validar um fluxo essencial do sistema:
 
 ### iFrame
 
-A aplicação é executada dentro de um `iframe`, exigindo troca de contexto antes das interações.
+A aplicação é renderizada dentro de um `iframe`, exigindo troca explícita de contexto antes das interações.
 
 ---
 
 ### Sincronização de UI (Ponto crítico)
 
-Durante a navegação na árvore de ativos, foram identificados problemas como:
+Durante a navegação na árvore de ativos, foram observados:
 
-- Elementos visíveis, mas não clicáveis  
+- Elementos visíveis, porém não interativos  
 - Delay entre renderização e ativação de eventos  
 
 #### Estratégia adotada:
 
-- Uso de esperas dinâmicas (`waitForElement`, `waitForText`)
+- Uso de waits dinâmicos (`waitForElement`, `waitForText`)
 - Uso de `wait(2)` em ponto específico da navegação
 
-Esse comportamento foi validado na prática:  
-sem o `wait`, o teste apresentava falhas intermitentes (flaky).
+Esse comportamento foi validado empiricamente:  
+sem a espera controlada, o teste apresentava falhas intermitentes (flaky).
 
-> Decisão: priorizar estabilidade da automação em um sistema com comportamento assíncrono inconsistente.
+> Decisão técnica: priorizar estabilidade da automação em um sistema com comportamento assíncrono inconsistente.
 
 ---
 
-## 🏷️ Execução por Tags
+## 🏷️ Execução
 
-# Fluxo principal
+```bash
+# Fluxo crítico
 npx codeceptjs run --grep "@smoke"
 
 # Testes negativos
