@@ -7,6 +7,7 @@ const NavigationSteps = require ('./steps/navigation')
 
   Scenario('Validar carregamento de alarmes do aerogerador AEG02', async ({ I }) => {
     I.amOnPage(process.env.URL_SISTEMA);
+    I.waitForElement('iframe#mainframe', 20);
     I.switchTo('iframe#mainframe');
 
     // Login
@@ -38,6 +39,7 @@ const NavigationSteps = require ('./steps/navigation')
 // Login inválido (sem senha)
 Scenario('Falha de login, digitando apenas usuário', ({ I }) => {
     I.amOnPage(process.env.URL_SISTEMA);
+    I.waitForElement('iframe#mainframe', 20);
     I.switchTo('iframe#mainframe');
 
     loginSteps.login(
@@ -55,6 +57,7 @@ Scenario('Falha de login, digitando apenas usuário', ({ I }) => {
 // Login inválido (sem usuário)
 Scenario('Falha de login, digitando apenas senha', ({ I }) => {
     I.amOnPage(process.env.URL_SISTEMA);
+    I.waitForElement('iframe#mainframe', 20);
     I.switchTo('iframe#mainframe');
 
     loginSteps.login(I,
