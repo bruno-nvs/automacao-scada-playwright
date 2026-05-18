@@ -1,99 +1,82 @@
 # Automação E2E - SCADA (Monitoramento de Alarmes)
 
-Projeto de automação de testes focado na validação de um fluxo crítico em um sistema SCADA industrial, combinando abordagem end-to-end com análise exploratória de comportamento da interface.
-O teste simula o uso real por um operador de planta, com foco em confiabilidade do acesso aos alarmes e estabilidade da navegação em cenários com UI assíncrona.
+Projeto de automação end-to-end voltado para validação de fluxos críticos em um sistema SCADA industrial, utilizando abordagem baseada em comportamento real da aplicação e análise de estabilidade da interface.
+
+O projeto simula operações executadas por um operador de monitoramento, validando autenticação, navegação entre ativos e acesso ao painel de alarmes em um ambiente com comportamento assíncrono.
 
 ---
 
-## 🎯 Objetivo
+## Objetivo
 
-Validar a operação de monitoramento de alarmes considerando:
+Validar o fluxo crítico de monitoramento de alarmes considerando:
 
 - Autenticação no sistema
-- Navegação na árvore de ativos
+- Navegação entre ativos do parque
 - Acesso ao painel de alarmes
-- Comportamento da interface sob condições reais de carregamento
+- Estabilidade da interface durante carregamento assíncrono
+- Tratamento de cenários negativos de login
 
 ---
 
-## 🧪 Abordagem de Teste
+## Estratégia de Teste
 
-Este projeto não se limita a automação tradicional. Ele combina:
+O projeto combina diferentes abordagens utilizadas em QA moderno:
 
-### 🔎 Teste exploratório guiado
-- Identificação de comportamentos inconsistentes da UI
+### Teste Exploratório Guiado
+- Identificação de inconsistências na interface
 - Observação de falhas intermitentes durante navegação
+- Análise de comportamento assíncrono da aplicação
 
-### 🔄 Teste end-to-end (E2E)
-- Validação completa do fluxo do usuário
-- Garantia de funcionamento do caminho crítico
+### Teste End-to-End (E2E)
+- Validação completa do fluxo do operador
+- Garantia do funcionamento do caminho crítico
 
-### 🧠 Teste investigativo
-- Análise de race condition na interface
+### Teste Investigativo
+- Análise de sincronização da interface
+- Tratamento de comportamento flaky
 - Ajustes baseados em comportamento real da aplicação
 
 ---
 
-## 🧪 Cenários Automatizados
+## Cenários Automatizados
 
-### 🟢 Fluxo crítico (Smoke Test)
+### Fluxo Crítico (Smoke Test)
 
-- Login com credenciais válidas  
-- Navegação até o ativo **AEG02**  
-- Acesso ao painel **"Alarmes / registros"**  
-- Validação do carregamento da tela  
-
----
-
-### 🔴 Cenários negativos
-
-- Login sem senha  
-- Login sem usuário  
-- Validação de mensagem de erro  
+- Login com credenciais válidas
+- Navegação até o ativo `AEG02`
+- Acesso ao painel `Alarmes / registros`
+- Validação do carregamento da interface
+- Geração de evidência via screenshot
 
 ---
 
-## ⚙️ Stack
+### Cenários Negativos
 
-- Node.js  
-- CodeceptJS  
-- Playwright  
-- dotenv  
-
----
-
-## ⚠️ Desafios Técnicos
-
-### iFrame
-
-A aplicação é renderizada dentro de um `iframe`, exigindo troca explícita de contexto antes das interações.
+- Login sem senha
+- Login sem usuário
+- Validação de mensagens de erro
+- Verificação de comportamento da autenticação
 
 ---
 
-### Sincronização de UI (Ponto crítico)
+## Tecnologias Utilizadas
 
-Durante a navegação na árvore de ativos, foram observados:
-
-- Elementos visíveis, porém não interativos  
-- Delay entre renderização e ativação de eventos  
-
-#### Estratégia adotada:
-
-- Uso de waits dinâmicos (`waitForElement`, `waitForText`)
-- Uso de `wait(2)` em ponto específico da navegação
-
-Esse comportamento foi validado empiricamente:  
-sem a espera controlada, o teste apresentava falhas intermitentes (flaky).
-
-> Decisão técnica: priorizar estabilidade da automação em um sistema com comportamento assíncrono inconsistente.
+- Node.js
+- CodeceptJS
+- Playwright
+- dotenv
 
 ---
 
-## 🏷️ Execução
+## Estrutura do Projeto
 
-```bash
-# Fluxo crítico
-npx codeceptjs run --grep "@smoke"
-
-# Testes negativos
-npx codeceptjs run --grep "@negativo"
+```txt
+.
+├── steps/
+│   ├── login.js
+│   └── navigation.js
+├── output/
+├── login_test.js
+├── codecept.conf.js
+├── .env
+└── README.md
