@@ -20,7 +20,7 @@ Validar o fluxo crítico de monitoramento de alarmes considerando:
 
 ## Estratégia de Teste
 
-O projeto combina diferentes abordagens utilizadas em QA moderno:
+O projeto combina diferentes abordagens utilizadas:
 
 ### Teste Exploratório Guiado
 - Identificação de inconsistências na interface
